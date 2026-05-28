@@ -1,0 +1,8 @@
+student_id,name,course,marks,attendance,city,performance,instructor,credits
+1,Neelam,ML,85.0,92.0,New Jersey,Excellent,Dr. Smith,3
+2,Aarav,AI,90.0,88.0,New York,Excellent,Dr. Brown,3
+3,Priya,Data Science,78.0,75.0,Boston,Good,Dr. Lee,4
+4,John,ML,92.0,95.0,Chicago,Excellent,Dr. Smith,3
+5,Sara,AI,85.66666666666667,70.0,New Jersey,Good,Dr. Brown,3
+6,Mike,ML,80.0,89.5,Dallas,Good,Dr. Smith,3
+7,Ananya,Data Science,89.0,91.0,Seattle,Excellent,Dr. Lee,4
