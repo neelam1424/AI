@@ -1,0 +1,11 @@
+student_id,name,course,marks,attendance,study_hours,city
+1,Neelam,ML,85,92,5,New Jersey
+2,Aarav,AI,90,88,6,New York
+3,Priya,Data Science,78,75,4,Boston
+4,John,ML,92,95,8,Chicago
+5,Sara,AI,68,70,2,New Jersey
+6,Mike,ML,80,82,5,Dallas
+7,Ananya,Data Science,89,91,7,Seattle
+8,Rahul,AI,72,73,3,Boston
+9,Emily,ML,95,96,9,Chicago
+10,David,Data Science,60,65,1,Dallas
