@@ -1,28 +1,16 @@
 from fastapi import FastAPI
-from sqlalchemy import text
 
-from app.db.session import SessionLocal
+from app.api.routes import auth
 
-app = FastAPI(
-    title = "TaskFlow API",
-    description="A Trello-like Task Management API",
-    version="1.0.0"
+app =FastAPI(
+    title = " TaskFlow API ",
+    description=" A Trello-like Task MAnagement API ",
+    version = "1.0.0"
 )
+
+app.include_router(auth.router)
+
 
 @app.get("/")
 def root():
-    return {
-        "message": "TaskFlow API is running"
-    }
-
-
-@app.get("/db-test")
-def db_test():
-    db = SessionLocal()
-
-    try:
-        db.execute(text("SELECT 1"))
-        return {"message": "Database connected successfully"}
-    finally:
-        db.close()
-
+    return {"message": "TaskFlow API is running "}
