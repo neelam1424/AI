@@ -4,6 +4,7 @@ from fastapi import WebSocket
 class WebSocketManager:
     def __init__(self):
         self.active_connections: dict[int, WebSocket] = {}
+        self.room_connections: dict[int, list[WebSocket]] = {}
 
     async def connect(
         self,
@@ -25,16 +26,6 @@ class WebSocketManager:
     ) -> bool:
         return user_id in self.active_connections
 
-    async def send_personal_message(
-        self,
-        user_id: int,
-        message: str
-    ):
-        websocket = self.active_connections.get(user_id)
-
-        if websocket:
-            await websocket.send_text(message)
-
     async def send_personal_json(
         self,
         user_id: int,
@@ -45,9 +36,35 @@ class WebSocketManager:
         if websocket:
             await websocket.send_json(data)
 
-    async def broadcast(
+    async def connect_to_room(
         self,
-        message: str
+        room_id: int,
+        websocket: WebSocket
     ):
-        for websocket in self.active_connections.values():
-            await websocket.send_text(message)
+        await websocket.accept()
+
+        if room_id not in self.room_connections:
+            self.room_connections[room_id] = []
+
+        self.room_connections[room_id].append(websocket)
+
+    def disconnect_from_room(
+        self,
+        room_id: int,
+        websocket: WebSocket
+    ):
+        if room_id in self.room_connections:
+            self.room_connections[room_id].remove(websocket)
+
+            if len(self.room_connections[room_id]) == 0:
+                del self.room_connections[room_id]
+
+    async def send_room_json(
+        self,
+        room_id: int,
+        data: dict
+    ):
+        connections = self.room_connections.get(room_id, [])
+
+        for websocket in connections:
+            await websocket.send_json(data)

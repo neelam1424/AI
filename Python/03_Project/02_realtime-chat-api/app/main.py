@@ -8,7 +8,7 @@ from app.api.routes.auth import router as auth_router
 from app.api.routes.users import router as users_router
 from app.api.routes.messages import router as messages_router
 from app.api.routes.websocket import router as websocket_router
-
+from app.api.routes.rooms import router as rooms_router
 
 app = FastAPI(
     title="Realtime Notification + Chat API"
@@ -30,3 +30,4 @@ app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(messages_router)
 app.include_router(websocket_router)
+app.include_router(rooms_router)
