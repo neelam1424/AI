@@ -6,6 +6,9 @@ from app.schemas.user import UserCreate, UserLogin, UserResponse, Token
 from app.repositories.user_repository import UserRepository
 from app.services.auth_service import AuthService
 
+from app.api.dependencies import get_current_user
+from app.models.user import User
+
 
 router = APIRouter(
     prefix="/auth",
@@ -32,3 +35,7 @@ def login(
     auth_service = AuthService(user_repository)
 
     return auth_service.login(login_data)
+
+@router.get("/me", response_model=UserResponse)
+def get_me(current_user: User = Depends(get_current_user)):
+    return current_user
