@@ -1,5 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
+from app.core.enums import TaskStatus
 
 
 class TaskCreate(BaseModel):
@@ -13,14 +14,14 @@ class TaskAssign(BaseModel):
 
 
 class TaskStatusUpdate(BaseModel):
-    status: str
+    status: TaskStatus
 
 
 class TaskResponse(BaseModel):
     id: int
     title: str
     description: Optional[str]
-    status: str
+    status: TaskStatus
     project_id: int
     assigned_to_id: Optional[int]
 

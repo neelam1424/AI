@@ -146,13 +146,7 @@ class TaskService:
         current_user: User
     ):
         require_roles(current_user, ["admin", "manager", "member"])
-        allowed_statuses = ["todo", "in_progress", "done"]
-
-        if status_data.status not in allowed_statuses:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid task status"
-            )
+        
 
         task = self.task_repository.get_by_id(task_id)
 
@@ -184,6 +178,6 @@ class TaskService:
                 detail="You are not allowed to update this task"
             )
 
-        task.status = status_data.status
+        task.status = status_data.status.value
 
         return self.task_repository.update(task)
