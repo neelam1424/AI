@@ -8,8 +8,9 @@ from app.db.session import get_db
 from app.models.user import User
 from app.repositories.project_repository import ProjectRepository
 from app.repositories.task_repository import TaskRepository
+from app.repositories.user_repository import UserRepository
 from app.repositories.workspace_repository import WorkspaceRepository
-from app.schemas.task import TaskCreate, TaskResponse
+from app.schemas.task import TaskCreate, TaskResponse, TaskAssign
 from app.services.task_service import TaskService
 
 
@@ -28,11 +29,13 @@ def create_task(
     task_repository = TaskRepository(db)
     project_repository = ProjectRepository(db)
     workspace_repository = WorkspaceRepository(db)
+    user_repository = UserRepository(db)
 
     task_service = TaskService(
         task_repository=task_repository,
         project_repository=project_repository,
-        workspace_repository=workspace_repository
+        workspace_repository=workspace_repository,
+        user_repository=user_repository
     )
 
     return task_service.create_task(
@@ -50,14 +53,42 @@ def get_project_tasks(
     task_repository = TaskRepository(db)
     project_repository = ProjectRepository(db)
     workspace_repository = WorkspaceRepository(db)
+    user_repository = UserRepository(db)
 
     task_service = TaskService(
         task_repository=task_repository,
         project_repository=project_repository,
-        workspace_repository=workspace_repository
+        workspace_repository=workspace_repository,
+        user_repository=user_repository
     )
 
     return task_service.get_project_tasks(
         project_id=project_id,
+        current_user=current_user
+    )
+
+
+@router.patch("/{task_id}/assign", response_model=TaskResponse)
+def assign_task(
+    task_id: int,
+    assign_data: TaskAssign,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    task_repository = TaskRepository(db)
+    project_repository = ProjectRepository(db)
+    workspace_repository = WorkspaceRepository(db)
+    user_repository = UserRepository(db)
+
+    task_service = TaskService(
+        task_repository=task_repository,
+        project_repository=project_repository,
+        workspace_repository=workspace_repository,
+        user_repository=user_repository
+    )
+
+    return task_service.assign_task(
+        task_id=task_id,
+        assign_data=assign_data,
         current_user=current_user
     )
