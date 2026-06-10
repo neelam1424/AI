@@ -9,6 +9,7 @@ from app.schemas.task import TaskCreate
 from app.repositories.user_repository import UserRepository
 from app.schemas.task import TaskCreate, TaskAssign
 from app.schemas.task import TaskCreate, TaskAssign, TaskStatusUpdate
+from app.core.permissions import require_roles
 
 
 class TaskService:
@@ -29,6 +30,7 @@ class TaskService:
         task_data: TaskCreate,
         current_user: User
     ):
+        require_roles(current_user, ["admin", "manager"])
         project = self.project_repository.get_by_id(task_data.project_id)
 
         if not project:
@@ -94,6 +96,7 @@ class TaskService:
     assign_data: TaskAssign,
     current_user: User
 ):
+        require_roles(current_user, ["admin", "manager"])
         task = self.task_repository.get_by_id(task_id)
 
         if not task:
@@ -142,6 +145,7 @@ class TaskService:
         status_data: TaskStatusUpdate,
         current_user: User
     ):
+        require_roles(current_user, ["admin", "manager", "member"])
         allowed_statuses = ["todo", "in_progress", "done"]
 
         if status_data.status not in allowed_statuses:

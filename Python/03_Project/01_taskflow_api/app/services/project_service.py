@@ -5,6 +5,7 @@ from app.models.user import User
 from app.repositories.project_repository import ProjectRepository
 from app.repositories.workspace_repository import WorkspaceRepository
 from app.schemas.project import ProjectCreate
+from app.core.permissions import require_roles
 
 
 class ProjectService:
@@ -21,6 +22,7 @@ class ProjectService:
         project_data: ProjectCreate,
         current_user: User
     ):
+        require_roles(current_user, ["admin", "manager"])
         workspace = self.workspace_repository.get_by_id(
             project_data.workspace_id
         )
