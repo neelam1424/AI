@@ -30,3 +30,4 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     workspaces = relationship("Workspace", back_populates="owner")
+    assigned_tasks = relationship("Task", back_populates="assigned_to")
