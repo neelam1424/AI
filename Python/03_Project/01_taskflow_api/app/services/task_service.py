@@ -8,6 +8,7 @@ from app.repositories.workspace_repository import WorkspaceRepository
 from app.schemas.task import TaskCreate
 from app.repositories.user_repository import UserRepository
 from app.schemas.task import TaskCreate, TaskAssign
+from app.schemas.task import TaskCreate, TaskAssign, TaskStatusUpdate
 
 
 class TaskService:
@@ -132,5 +133,53 @@ class TaskService:
         )
 
         task.assigned_to_id = assign_data.user_id
+
+        return self.task_repository.update(task)
+    
+    def update_task_status(
+        self,
+        task_id: int,
+        status_data: TaskStatusUpdate,
+        current_user: User
+    ):
+        allowed_statuses = ["todo", "in_progress", "done"]
+
+        if status_data.status not in allowed_statuses:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid task status"
+            )
+
+        task = self.task_repository.get_by_id(task_id)
+
+        if not task:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Task not found"
+            )
+
+        project = self.project_repository.get_by_id(task.project_id)
+
+        if not project:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Project not found"
+            )
+
+        workspace = self.workspace_repository.get_by_id(project.workspace_id)
+
+        if not workspace:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Workspace not found"
+            )
+
+        if workspace.owner_id != current_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You are not allowed to update this task"
+            )
+
+        task.status = status_data.status
 
         return self.task_repository.update(task)

@@ -10,7 +10,12 @@ from app.repositories.project_repository import ProjectRepository
 from app.repositories.task_repository import TaskRepository
 from app.repositories.user_repository import UserRepository
 from app.repositories.workspace_repository import WorkspaceRepository
-from app.schemas.task import TaskCreate, TaskResponse, TaskAssign
+from app.schemas.task import (
+    TaskCreate,
+    TaskResponse,
+    TaskAssign,
+    TaskStatusUpdate
+)
 from app.services.task_service import TaskService
 
 
@@ -90,5 +95,30 @@ def assign_task(
     return task_service.assign_task(
         task_id=task_id,
         assign_data=assign_data,
+        current_user=current_user
+    )
+
+@router.patch("/{task_id}/status", response_model=TaskResponse)
+def update_task_status(
+    task_id: int,
+    status_data: TaskStatusUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    task_repository = TaskRepository(db)
+    project_repository = ProjectRepository(db)
+    workspace_repository = WorkspaceRepository(db)
+    user_repository = UserRepository(db)
+
+    task_service = TaskService(
+        task_repository=task_repository,
+        project_repository=project_repository,
+        workspace_repository=workspace_repository,
+        user_repository=user_repository
+    )
+
+    return task_service.update_task_status(
+        task_id=task_id,
+        status_data=status_data,
         current_user=current_user
     )
