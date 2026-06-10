@@ -3,7 +3,7 @@ from fastapi import HTTPException, status
 from app.models.user import User
 from app.schemas.user import UserCreate, UserLogin
 from app.repositories.user_repository import UserRepository
-from app.core.security import hash_password, verify_password
+from app.core.security import hash_password, verify_password, create_access_token
 
 
 
@@ -44,4 +44,11 @@ class AuthService:
                 detail = "Invalid email or password"
             )
         
-        return user
+        access_token = create_access_token(
+        data={"sub": user.email}
+        )
+
+        return {
+        "access_token": access_token,
+        "token_type": "bearer"
+        }

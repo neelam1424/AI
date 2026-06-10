@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.schemas.user import UserCreate, UserResponse, UserLogin
+from app.schemas.user import UserCreate, UserLogin, UserResponse, Token
 from app.repositories.user_repository import UserRepository
 from app.services.auth_service import AuthService
 
@@ -23,7 +23,7 @@ def signup(
 
     return auth_service.signup(user_data)
 
-@router.post("/login", response_model=UserResponse)
+@router.post("/login", response_model=Token)
 def login(
         login_data: UserLogin,
         db: Session = Depends(get_db)
