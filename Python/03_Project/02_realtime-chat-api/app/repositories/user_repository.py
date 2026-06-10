@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 
 from app.models.user import User
@@ -39,3 +40,28 @@ class UserRepository:
         await self.db.refresh(user)
 
         return user
+    
+
+async def update_online_status(
+    self,
+    user_id: int,
+    is_online: bool
+):
+    user = await self.get_by_id(user_id)
+
+    if user is None:
+        return None
+
+    user.is_online = is_online
+
+    await self.db.commit()
+    await self.db.refresh(user)
+
+    return user
+
+async def get_all_users(self):
+    result = await self.db.execute(
+        select(User).order_by(User.id.asc())
+    )
+
+    return list(result.scalars().all())
