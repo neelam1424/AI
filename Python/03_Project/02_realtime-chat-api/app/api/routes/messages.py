@@ -13,7 +13,7 @@ from app.schemas.message import (
 )
 from app.services.message_service import MessageService
 from app.services.email_service import EmailService
-
+from app.services.manager_instance import websocket_manager
 
 router = APIRouter(
     prefix="/messages",
@@ -35,7 +35,8 @@ async def send_direct_message(
     message_service = MessageService(
         message_repository=message_repository,
         user_repository=user_repository,
-        email_service=email_service
+        email_service=email_service,
+        websocket_manager=websocket_manager
     )
 
     return await message_service.send_direct_message(

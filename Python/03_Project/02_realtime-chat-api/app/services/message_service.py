@@ -4,6 +4,7 @@ from app.repositories.message_repository import MessageRepository
 from app.repositories.user_repository import UserRepository
 from app.schemas.message import MessageCreate, RoomMessageCreate
 from app.services.email_service import EmailService
+from app.services.websocket_manager import WebSocketManager
 
 
 class MessageService:
@@ -11,11 +12,13 @@ class MessageService:
         self,
         message_repository: MessageRepository,
         user_repository: UserRepository,
-        email_service: EmailService
+        email_service: EmailService,
+        websocket_manager: WebSocketManager
     ):
         self.message_repository = message_repository
         self.user_repository = user_repository
         self.email_service = email_service
+        self.websocket_manager = websocket_manager
 
     async def send_direct_message(
         self,
@@ -42,17 +45,32 @@ class MessageService:
         sender = await self.user_repository.get_by_id(sender_id)
 
         message = await self.message_repository.create_direct_message(
-            sender_id=sender_id,
-            receiver_id=message_data.receiver_id,
-            content=message_data.content
-        )
+        sender_id=sender_id,
+        receiver_id=message_data.receiver_id,
+        content=message_data.content
+    )
 
-        background_tasks.add_task(
-            self.email_service.send_new_message_email,
-            receiver.email,
-            sender.name,
-            message_data.content
-        )
+        if self.websocket_manager.is_online(receiver.id):
+            await self.websocket_manager.send_personal_json(
+                user_id=receiver.id,
+                data={
+                    "type": "new_message",
+                    "message": {
+                        "id": message.id,
+                        "sender_id": message.sender_id,
+                        "receiver_id": message.receiver_id,
+                        "content": message.content,
+                        "created_at": str(message.created_at)
+                    }
+                }
+            )
+        else:
+            background_tasks.add_task(
+                self.email_service.send_new_message_email,
+                receiver.email,
+                sender.name,
+                message_data.content
+            )
 
         return message
 
