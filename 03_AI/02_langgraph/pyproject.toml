@@ -13,3 +13,8 @@ dependencies = [
     "langsmith>=0.10.0",
     "python-dotenv>=1.2.2",
 ]
+
+[tool.uv.workspace]
+members = [
+    "3_mcp",
+]
