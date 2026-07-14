@@ -1,0 +1,7 @@
+deepagents
+langchain
+langchain-openai
+langchain-groq
+ipykernel
+dotenv
+tavily
