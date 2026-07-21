@@ -1,0 +1,5 @@
+Retrieval-Augmented Generation combines information retrieval
+with language model generation.
+
+A retriever finds relevant documents before the LLM generates
+the final answer.
