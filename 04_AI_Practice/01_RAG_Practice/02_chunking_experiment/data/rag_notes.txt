@@ -1,0 +1,27 @@
+Retrieval-Augmented Generation combines retrieval with language
+model generation. The retriever searches external knowledge before
+the language model generates an answer.
+
+Document loaders read information from files, webpages, databases,
+or applications. They convert source information into standardized
+Document objects containing page content and metadata.
+
+Chunking divides large documents into smaller searchable passages.
+Small chunks can improve retrieval precision but may lose context.
+Large chunks preserve context but may include irrelevant topics.
+
+Chunk overlap repeats some content between neighboring chunks. It
+helps preserve information that would otherwise be separated at a
+chunk boundary. Too much overlap creates duplicate chunks and wastes
+storage and context.
+
+Embedding models convert chunks into numerical vectors. Semantically
+similar text produces vectors that are close together. A vector
+database stores those vectors and supports similarity search.
+
+During retrieval, the user's query is converted into an embedding.
+The vector database compares the query vector against stored chunk
+vectors and returns the most similar chunks.
+
+The retrieved chunks are added to a prompt along with the question.
+The language model reads the context and generates a grounded answer.
